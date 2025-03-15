@@ -10,6 +10,7 @@ import (
 )
 
 type SOS struct {
+	Id      int    `json:"id"`
 	Message string `json:"message"`
 	Author  string `json:"author"`
 }
@@ -40,4 +41,27 @@ func PostAlert(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	pkg.RespondWithJSON(w, 200, alert)
+}
+
+func GetAlert(w http.ResponseWriter, request *http.Request) {
+	query := "SELECT * FROM alerts"
+
+	rows, err := db.DB.Query(context.Background(), query)
+	if err != nil {
+		log.Println("DB Error", err)
+	}
+
+	var alerts []SOS
+	defer rows.Close()
+	for rows.Next() {
+		var alert SOS
+		err := rows.Scan(&alert.Id, &alert.Message, &alert.Author)
+		if err != nil {
+			log.Println("error scanning the row", err)
+			return
+		}
+		alerts = append(alerts, alert)
+	}
+
+	pkg.RespondWithJSON(w, 200, alerts)
 }

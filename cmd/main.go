@@ -32,7 +32,7 @@ func main() {
 	v1Router := chi.NewRouter()
 	router.Mount("/api/v1", v1Router)
 	v1Router.Post("/", handlers.PostAlert) //Expects a function reference not the function itself
-
+	v1Router.Get("/", handlers.GetAlert)
 	srv := &http.Server{
 		Handler: router,
 		Addr:    ":8080",
